@@ -66,9 +66,14 @@ numberKeys.forEach((number) => {
     number.addEventListener('click', () => {
         if (!operator) {
             if (number.textContent !== '.') {
-                if (firstNumber === '0') {firstNumber = ''}
-            } else if (number.textContent === '.' && secondNumber === '') {
+                if (firstNumber === '0') {
+                    firstNumber = '';
+                }
+            } else if (number.textContent === '.' && firstNumber === '') {
                 firstNumber = '0';
+            }
+            if (number.textContent === '.' && firstNumber.split('').includes('.')) {
+                exit;
             }
             firstNumber += number.textContent; // concat the number as string
             firstTerm = parseFloat(firstNumber); // convert the string to float to operate with it
@@ -80,6 +85,9 @@ numberKeys.forEach((number) => {
                 }
             } else if (number.textContent === '.' && secondNumber === '') {
                 secondNumber = '0';
+            }
+            if (number.textContent === '.' && secondNumber.split('').includes('.')) {
+                exit;
             }
             secondNumber += number.textContent;
             secondTerm = parseFloat(secondNumber);
