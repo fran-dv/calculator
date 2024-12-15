@@ -38,6 +38,7 @@ function operate(num1, operator, num2) {
 const display = document.querySelector('#display');
 const numberKeys = document.querySelectorAll('.key.number');
 const operatorKeys = document.querySelectorAll('.key.operator');
+const changeSign = document.querySelector('.key.change-sign');
 const backspaceKey = document.querySelector('.key.backspace');
 const clearKey = document.querySelector('.key.clear');
 const equalsKey = document.querySelector('.key.equals');
@@ -64,10 +65,22 @@ resetValues();
 numberKeys.forEach((number) => {
     number.addEventListener('click', () => {
         if (!operator) {
+            if (number.textContent !== '.') {
+                if (firstNumber === '0') {firstNumber = ''}
+            } else if (number.textContent === '.' && secondNumber === '') {
+                firstNumber = '0';
+            }
             firstNumber += number.textContent; // concat the number as string
             firstTerm = parseFloat(firstNumber); // convert the string to float to operate with it
             displayInput.textContent = firstNumber;
         } else {
+            if (number.textContent !== '.') {
+                if (secondNumber === '0') {
+                    secondNumber = '';
+                }
+            } else if (number.textContent === '.' && secondNumber === '') {
+                secondNumber = '0';
+            }
             secondNumber += number.textContent;
             secondTerm = parseFloat(secondNumber);
             displayInput.textContent = firstNumber + ' ' + operator + ' ' + secondNumber;
@@ -100,6 +113,33 @@ operatorKeys.forEach((key) => {
     })
 })
 
+function deleteFirstChar(str) {
+    str = str.split('').slice(1).join('');
+    if (str[0] === ' ') {
+        str = str.split('').slice(1).join('');
+    }
+    console.log(str);
+    return str;
+}
+
+changeSign.addEventListener('click', () => {
+    if (!operator) {
+        if (firstTerm && firstTerm > 0) {
+            firstTerm = -firstTerm;
+            firstNumber = '-' + firstNumber;
+            displayInput.textContent = firstNumber;
+        } else if (firstTerm && firstTerm < 0) {
+            firstTerm *= -1;
+            firstNumber = deleteFirstChar(firstNumber);
+            displayInput.textContent = firstNumber;
+        }
+    } else if (secondTerm && secondTerm > 0) {
+        secondTerm = -secondTerm;
+        secondNumber = '-' + secondNumber;
+        displayInput.textContent = firstNumber + ' ' + operator + ' (' + secondNumber + ')';
+    }
+})
+
 function deleteLastChar(str) {
     str = str.split('').slice(0, -1).join('');
     if (str.slice(-1) === ' ') {
@@ -112,8 +152,13 @@ backspaceKey.addEventListener('click', () => {
     if (!secondTerm) {
         if (!operator) {
             displayInput.textContent = deleteLastChar(displayInput.textContent);
-            firstNumber = displayInput.textContent;
-            firstTerm = parseFloat(firstNumber);
+            if (displayInput.textContent === '') {
+                firstNumber = '';
+                firstTerm = null;
+            } else {
+                firstNumber = displayInput.textContent;
+                firstTerm = parseFloat(firstNumber);
+            }
         } else {
             displayInput.textContent = deleteLastChar(displayInput.textContent);
             operator = null;
@@ -132,4 +177,17 @@ backspaceKey.addEventListener('click', () => {
 
 clearKey.addEventListener('click', () => {
     resetValues();
+})
+
+equalsKey.addEventListener('click', () => {
+    let result;
+    if (secondTerm) {
+        result = operations[operator](firstTerm, secondTerm);
+        firstTerm = result;
+        firstNumber = String(firstTerm);
+        secondTerm = null;
+        operator = null;
+        secondNumber = '';
+        displayInput.textContent = result;
+    }
 })

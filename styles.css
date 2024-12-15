@@ -3,12 +3,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #93979e;
 }
 
 #calculator {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    gap: 28px;
     width: 424px;
     height: auto;
     flex: 0 0 auto;
